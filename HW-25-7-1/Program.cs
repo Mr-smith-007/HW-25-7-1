@@ -1,6 +1,8 @@
 ﻿
 
 
+using HW_25_7_1.Entities;
+
 namespace HW_25_7_1
 {
     class Program
