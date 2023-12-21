@@ -35,14 +35,14 @@ namespace HW_25_7_1.Repositories
         }
 
         public void FindAll()
-        {            
+        {
             try
-            {                
+            {
                 using (var db = new AppContext())
                 {
                     var books = db.Books.ToList();
                 }
-            }            
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"Возникло исключение {ex.Message}");
@@ -56,9 +56,9 @@ namespace HW_25_7_1.Repositories
 
             Console.Write("Введите год издания новой книги: ");
             var result = int.TryParse(Console.ReadLine(), out int year);
-            if ((!result)||(year < 0)||(year > DateTime.Now.Year))
+            if ((!result) || (year < 0) || (year > DateTime.Now.Year))
                 throw new WrongYearException();
-                        
+
             try
             {
                 using (var db = new AppContext())
@@ -101,7 +101,7 @@ namespace HW_25_7_1.Repositories
             {
                 Console.WriteLine("Некорректный Id");
             }
-            catch(BookNotFoundException)
+            catch (BookNotFoundException)
             {
                 Console.WriteLine("Книга с таким Id не найдена");
             }
@@ -110,6 +110,49 @@ namespace HW_25_7_1.Repositories
                 Console.WriteLine($"Возникло исключение {ex.Message}");
             }
 
+        }
+
+        public void UpdateBookYearById()
+        {
+            Console.Write($"Введите Id книги для обновления года");
+
+            try
+            {
+                bool result = int.TryParse(Console.ReadLine(), out var id);
+                if (!result)
+                    throw new WrongIdException();
+
+                using (var db = new AppContext())
+                {
+                    var book = db.Books.Where(book => book.Id == id).FirstOrDefault();
+                    if (book == null)
+                        throw new BookNotFoundException();
+
+                    Console.Write("Введите новый год издания");
+                    var resultYear = int.TryParse(Console.ReadLine(), out int newYear);
+                    if ((!resultYear) || (newYear < 0) || (newYear > DateTime.Now.Year))
+                        throw new WrongYearException();
+                    
+                    book.Year = newYear;
+                    db.SaveChanges();
+                }
+            }
+            catch (WrongIdException)
+            {
+                Console.WriteLine("Некорректный Id");
+            }
+            catch (BookNotFoundException)
+            {
+                Console.WriteLine("Книга с таким Id не найдена");
+            }
+            catch(WrongYearException)
+            {
+                Console.WriteLine("Введен некорректный год издания");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
         }
     }
 }
