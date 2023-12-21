@@ -140,5 +140,42 @@ namespace HW_25_7_1.Repositories
                 Console.WriteLine($"Возникло исключение {ex.Message}");
             }
         }
+
+        public void UpdateUserNameById()
+        {
+            Console.Write("Введите Id пользователя для обновления имени: ");
+            
+            try
+            {
+                bool result = int.TryParse(Console.ReadLine(), out var id);
+                if (!result)
+                    throw new WrongIdException();
+                                
+                using (var db = new AppContext())
+                {
+                    var user = db.Users.Where(user => user.Id == id).FirstOrDefault();
+                    if (user == null)
+                        throw new UserNotFoundException();
+
+                    Console.Write("Введите новое имя пользователя: ");
+                    string newName = Console.ReadLine();
+
+                    user.Name = newName;
+                    db.SaveChanges();
+                }
+            }
+            catch (WrongIdException)
+            {
+                Console.WriteLine("Некорректный Id");
+            }
+            catch (UserNotFoundException)
+            {
+                Console.WriteLine("Пользователь с такими данными не найден");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
+        }
     }
 }
