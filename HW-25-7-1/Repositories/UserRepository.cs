@@ -69,7 +69,7 @@ namespace HW_25_7_1.Repositories
             {
                 Console.WriteLine("Некорректный Email");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Возникло исключение {ex.Message}");
             }
@@ -94,19 +94,51 @@ namespace HW_25_7_1.Repositories
                     db.SaveChanges();
                 }
             }
-            catch(WrongIdException) 
+            catch (WrongIdException)
             {
                 Console.WriteLine("Некорректный Id");
             }
-            catch(UserNotFoundException)
+            catch (UserNotFoundException)
             {
                 Console.WriteLine("Пользователь с такими данными не найден");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Возникло исключение {ex.Message}");
             }
+        }
 
+        public void DeleteUserByEmail()
+        {
+            Console.Write($"Введите Email пользователя для удаления");
+
+            try
+            {
+                var email = Console.ReadLine();
+                if (!new EmailAddressAttribute().IsValid(email))
+                    throw new WrongEmailException();
+
+                using (var db = new AppContext())
+                {
+                    var user = db.Users.Where(user => user.Email == email).FirstOrDefault();
+                    if (user == null)
+                        throw new UserNotFoundException();
+                    db.Users.Remove(user);
+                    db.SaveChanges();
+                }
+            }
+            catch (WrongEmailException)
+            {
+                Console.WriteLine("Некорректный Email");
+            }
+            catch (UserNotFoundException)
+            {
+                Console.WriteLine("Пользователь с такими данными не найден");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
         }
     }
 }

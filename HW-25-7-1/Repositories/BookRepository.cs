@@ -103,7 +103,7 @@ namespace HW_25_7_1.Repositories
             }
             catch(BookNotFoundException)
             {
-                Console.WriteLine("Книга с таким Id не найдена")
+                Console.WriteLine("Книга с таким Id не найдена");
             }
             catch (Exception ex)
             {
