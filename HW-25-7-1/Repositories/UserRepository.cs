@@ -74,5 +74,39 @@ namespace HW_25_7_1.Repositories
                 Console.WriteLine($"Возникло исключение {ex.Message}");
             }
         }
+
+        public void DeleteUserById()
+        {
+            Console.Write($"Введите Id пользователя для удаления");
+
+            try
+            {
+                bool result = int.TryParse(Console.ReadLine(), out var id);
+                if (!result)
+                    throw new WrongIdException();
+
+                using (var db = new AppContext())
+                {
+                    var user = db.Users.Where(user => user.Id == id).FirstOrDefault();
+                    if (user == null)
+                        throw new UserNotFoundException();
+                    db.Users.Remove(user);
+                    db.SaveChanges();
+                }
+            }
+            catch(WrongIdException) 
+            {
+                Console.WriteLine("Некорректный Id");
+            }
+            catch(UserNotFoundException)
+            {
+                Console.WriteLine("Пользователь с такими данными не найден");
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
+
+        }
     }
 }

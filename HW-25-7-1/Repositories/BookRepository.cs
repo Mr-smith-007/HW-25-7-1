@@ -77,5 +77,39 @@ namespace HW_25_7_1.Repositories
                 Console.WriteLine($"Возникло исключение {ex.Message}");
             }
         }
+
+        public void DeleteBookById()
+        {
+            Console.Write($"Введите Id книги для удаления");
+
+            try
+            {
+                bool result = int.TryParse(Console.ReadLine(), out var id);
+                if (!result)
+                    throw new WrongIdException();
+
+                using (var db = new AppContext())
+                {
+                    var book = db.Books.Where(book => book.Id == id).FirstOrDefault();
+                    if (book == null)
+                        throw new BookNotFoundException();
+                    db.Books.Remove(book);
+                    db.SaveChanges();
+                }
+            }
+            catch (WrongIdException)
+            {
+                Console.WriteLine("Некорректный Id");
+            }
+            catch(BookNotFoundException)
+            {
+                Console.WriteLine("Книга с таким Id не найдена")
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
+
+        }
     }
 }
