@@ -1,6 +1,8 @@
-﻿using HW_25_7_1.Exceptions;
+﻿using HW_25_7_1.Entities;
+using HW_25_7_1.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,6 +43,35 @@ namespace HW_25_7_1.Repositories
                     var books = db.Books.ToList();
                 }
             }            
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
+        }
+
+        public void AddBook()
+        {
+            Console.Write("Введите название новой книги: ");
+            var title = Console.ReadLine();
+
+            Console.Write("Введите год издания новой книги: ");
+            var result = int.TryParse(Console.ReadLine(), out int year);
+            if ((!result)||(year < 0)||(year > DateTime.Now.Year))
+                throw new WrongYearException();
+                        
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    var book = new Book { Title = title, Year = year };
+                    db.Books.Add(book);
+                    db.SaveChanges();
+                }
+            }
+            catch (WrongYearException)
+            {
+                Console.WriteLine("Некорректный год издания");
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"Возникло исключение {ex.Message}");
