@@ -13,10 +13,6 @@ namespace HW_25_7_1
             var userRepository = new UserRepository();
             var bookRepository = new BookRepository();
 
-            using (var db = new AppContext())
-            {
-
-            }
-        }
+        }    
     }
 }

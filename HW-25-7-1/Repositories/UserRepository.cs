@@ -177,5 +177,49 @@ namespace HW_25_7_1.Repositories
                 Console.WriteLine($"Возникло исключение {ex.Message}");
             }
         }
+
+        public void UserTakeBook()
+        {
+            try
+            {
+                Console.Write("Введите Id пользователя, который хочет взять книгу: ");
+                bool resultUserId = int.TryParse(Console.ReadLine(), out int userId);
+                if (!resultUserId)
+                    throw new WrongIdException();
+
+                Console.Write("Введите Id книги, которую хочет взять пользователь");
+                bool resultBookId = int.TryParse(Console.ReadLine(),out int bookId);
+                if (!resultBookId)
+                    throw new WrongIdException();
+
+                using (var db = new AppContext())
+                {
+                    var user = db.Users.Where(user => user.Id == userId).FirstOrDefault();
+                    if (user == null)
+                        throw new UserNotFoundException();
+
+                    var book = db.Books.Where(book => book.Id == bookId).FirstOrDefault();
+                    if (book == null)
+                        throw new BookNotFoundException();
+                                        
+                    user.Books.Add(book);
+                    book.Quantity--;
+                    db.SaveChanges();
+                }
+            }
+            catch(WrongIdException)
+            {
+                Console.WriteLine("Некорректно введен Id");
+            }
+            catch (UserNotFoundException)
+            {
+                Console.WriteLine("Пользователь c указанным Id не найден");
+            }
+            catch (BookNotFoundException)
+            {
+                Console.WriteLine("Книга с указанным Id не найдена");
+            }
+            
+        }
     }
 }
