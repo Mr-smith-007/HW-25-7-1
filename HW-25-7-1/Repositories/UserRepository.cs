@@ -7,7 +7,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace HW_25_7_1.Repositories
 {
-    internal class UserRepository
+    public class UserRepository
     {
         public void FindById()
         {
@@ -327,7 +327,7 @@ namespace HW_25_7_1.Repositories
             {
                 Console.WriteLine("Некорректно введен Id");
                 return 0;
-            }           
+            }            
             catch (Exception ex)
             {
                 Console.WriteLine($"Возникло исключение: {ex.Message}");

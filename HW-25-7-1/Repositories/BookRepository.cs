@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace HW_25_7_1.Repositories
 {
-    internal class BookRepository
+    public class BookRepository
     {
         public void FindById()
         {

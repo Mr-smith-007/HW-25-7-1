@@ -6,23 +6,23 @@ using System.Threading.Tasks;
 
 namespace HW_25_7_1.Views
 {
-    public class MainView
+    public class DbQueryView
     {
         public void Show()
         {
-            Console.WriteLine("Редактировать данные (нажмите 1)");
-            Console.WriteLine("Произвести запрос (нажмите 2)");
+            Console.WriteLine("Запрос в БД пользователей (нажмите 1)");
+            Console.WriteLine("Запрос в БД книг (нажмите 2)");
 
             switch (Console.ReadLine())
             {
                 case "1":
                     {
-                        Program.editDbView.Show();
+                        Program.dbQueryUsersView.Show();
                         break;
                     }
                 case "2":
                     {
-                        Program.dbQueryView.Show();
+                        Program.dbQueryBooksView.Show();
                         break;
                     }
                 default:
@@ -30,6 +30,7 @@ namespace HW_25_7_1.Views
                         Console.WriteLine("Некорректная команда");
                         break;
                     }
+
             }
         }
     }
