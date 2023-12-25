@@ -13,7 +13,7 @@ namespace HW_25_7_1.Repositories
     {
         public void FindById()
         {
-            Console.Write("Введите ID пользователя для поиска: ");
+            Console.Write("Введите ID книги для поиска: ");
             try
             {
                 bool result = int.TryParse(Console.ReadLine(), out int id);
@@ -21,7 +21,29 @@ namespace HW_25_7_1.Repositories
                     throw new WrongIdException();
                 using (var db = new AppContext())
                 {
-                    var book = db.Books.Where(user => user.Id == id).FirstOrDefault();
+                    var book = db.Books.Where(b => b.Id == id).FirstOrDefault();
+                }
+            }
+            catch (WrongIdException)
+            {
+                Console.WriteLine("Введен неверный ID");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
+        }
+        public void FindByTitle()
+        {
+            Console.Write("Введите название книги для поиска: ");
+            try
+            {
+                var title = Console.ReadLine();
+                using (var db = new AppContext())
+                {
+                    var book = db.Books.Where(b => b.Title == title).FirstOrDefault();
+                    if (book == null)
+                        Console.WriteLine("Книга с таким названием не найдена");
                 }
             }
             catch (WrongIdException)
@@ -51,6 +73,42 @@ namespace HW_25_7_1.Repositories
 
         public void AddBook()
         {
+            Console.Write("Введите название книги: ");
+            var title = Console.ReadLine();
+
+            try
+            {
+                Console.Write("Введите кол-во книг поступающих на склад: ");
+                var quantityResult = int.TryParse(Console.ReadLine(), out int quantity);
+                if ((!quantityResult) || (quantity < 0))
+                    throw new ArgumentException();
+
+                using (var db = new AppContext())
+                {
+                    var book = db.Books.Where(b => b.Title == title).FirstOrDefault();
+                    if (book != null)
+                    {
+                        book.Quantity += quantity;
+                        db.SaveChanges();
+                    }
+                    else
+                        Console.WriteLine("Книга с таким названием не найдена, добавьте как новую книгу");
+
+                }
+            }
+            catch(ArgumentException)
+            {
+                Console.WriteLine("Некорректно введено кол-во книг");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
+        }
+
+
+        public void AddNewBook()
+        {
             Console.Write("Введите название новой книги: ");
             var title = Console.ReadLine();
 
@@ -67,14 +125,14 @@ namespace HW_25_7_1.Repositories
                 if ((!result) || (year < 0) || (year > DateTime.Now.Year))
                     throw new WrongYearException();
 
-                Console.Write("Введите кол-во книг на складе: ");
-                var quantityResult = int.TryParse(Console.ReadLine(),out int quantity);
+                Console.Write("Введите кол-во книг поступающих на склад: ");
+                var quantityResult = int.TryParse(Console.ReadLine(), out int quantity);
                 if ((!quantityResult) || (quantity < 0))
                     throw new ArgumentException();
 
                 using (var db = new AppContext())
                 {
-                    var book = new Book { Title = title, Author = author, Year = year, Genre = genre, Quantity = quantity};
+                    var book = new Book { Title = title, Author = author, Year = year, Genre = genre, Quantity = quantity };
                     db.Books.Add(book);
                     db.SaveChanges();
                 }
@@ -82,6 +140,10 @@ namespace HW_25_7_1.Repositories
             catch (WrongYearException)
             {
                 Console.WriteLine("Некорректный год издания");
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine("Некорректно введено кол-во книг");
             }
             catch (Exception ex)
             {
@@ -163,6 +225,45 @@ namespace HW_25_7_1.Repositories
             catch (Exception ex)
             {
                 Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
+        }
+
+        public void GenreYearBookList()
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    Console.Write("Введите жанр книги: ");
+                    var genre = Console.ReadLine();
+                    var findGenre = db.Books.Any(b => b.Genre == genre);
+                    if (!findGenre)
+                        throw new GenreNotFoundException();
+
+                    Console.Write("Введите начальный год диапазона поиска: ");
+                    var resultYear1 = int.TryParse(Console.ReadLine(), out int year1);
+                    if ((!resultYear1) || (year1 < 0) || (year1 > DateTime.Now.Year))
+                        throw new WrongYearException();
+
+                    Console.Write("Введите конечный год диапазона поиска: ");
+                    var resultYear2 = int.TryParse(Console.ReadLine(), out int year2);
+                    if ((!resultYear2) || (year2 < 0) || (year2 > DateTime.Now.Year) || (year1 > year2))
+                        throw new WrongYearException();
+
+                    var books = db.Books.Where(b => b.Genre == genre && (b.Year >= year1 && b.Year <= year2)).ToList();
+                }
+            }
+            catch(GenreNotFoundException)
+            {
+                Console.WriteLine("Книг с указанным жанром не найдено");
+            }
+            catch (WrongYearException)
+            {
+                Console.WriteLine("Некорректно указан год");
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine($"Возникло исключение: {ex.Message}");
             }
         }
     }
