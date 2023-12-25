@@ -146,13 +146,13 @@ namespace HW_25_7_1.Repositories
         public void UpdateUserNameById()
         {
             Console.Write("Введите Id пользователя для обновления имени: ");
-            
+
             try
             {
                 bool result = int.TryParse(Console.ReadLine(), out var id);
                 if (!result)
                     throw new WrongIdException();
-                                
+
                 using (var db = new AppContext())
                 {
                     var user = db.Users.Where(user => user.Id == id).FirstOrDefault();
@@ -190,7 +190,7 @@ namespace HW_25_7_1.Repositories
                     throw new WrongIdException();
 
                 Console.Write("Введите Id книги, которую хочет взять пользователь");
-                bool resultBookId = int.TryParse(Console.ReadLine(),out int bookId);
+                bool resultBookId = int.TryParse(Console.ReadLine(), out int bookId);
                 if (!resultBookId)
                     throw new WrongIdException();
 
@@ -203,13 +203,13 @@ namespace HW_25_7_1.Repositories
                     var book = db.Books.Where(book => book.Id == bookId).FirstOrDefault();
                     if (book == null)
                         throw new BookNotFoundException();
-                                        
+
                     user.Books.Add(book);
                     book.Quantity--;
                     db.SaveChanges();
                 }
             }
-            catch(WrongIdException)
+            catch (WrongIdException)
             {
                 Console.WriteLine("Некорректно введен Id");
             }
@@ -221,7 +221,7 @@ namespace HW_25_7_1.Repositories
             {
                 Console.WriteLine("Книга с указанным Id не найдена");
             }
-            
+
         }
 
         public void UserReturnBook()
@@ -284,10 +284,10 @@ namespace HW_25_7_1.Repositories
 
                 using (var db = new AppContext())
                 {
-                    var book = db.Books.Where(b => b.Id ==bookId).FirstOrDefault();
+                    var book = db.Books.Where(b => b.Id == bookId).FirstOrDefault();
                     if (book == null)
                         throw new BookNotFoundException();
-                    bool result = db.Users.Include(us => us.Books).Any(us => us.Books.Contains(book));
+                    var result = db.Users.Include(us => us.Books).Where(us => us.Id == userId).Any(u => u.Books.Contains(book));
                     return result;
                 }
             }
@@ -301,10 +301,37 @@ namespace HW_25_7_1.Repositories
                 Console.WriteLine("Книга с указанным Id не найдена");
                 return false;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine($"Возникло исключение: {ex.Message}");
                 return false;
+            }
+        }
+
+        public int UserBooksCount()
+        {
+            try
+            {
+                Console.Write("Введите Id пользователя: ");
+                bool resultUserId = int.TryParse(Console.ReadLine(), out int userId);
+                if (!resultUserId)
+                    throw new WrongIdException();
+
+                using (var db = new AppContext())
+                {
+                    int result = db.Users.Include(us => us.Books).Where(u => u.Id == userId).Select(u => u.Books).Count();
+                    return result;
+                }
+            }
+            catch (WrongIdException)
+            {
+                Console.WriteLine("Некорректно введен Id");
+                return 0;
+            }           
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение: {ex.Message}");
+                return 0;
             }
         }
     }
