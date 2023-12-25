@@ -266,5 +266,35 @@ namespace HW_25_7_1.Repositories
                 Console.WriteLine($"Возникло исключение: {ex.Message}");
             }
         }
+
+        public void AutorsBooksCount()
+        {
+            try
+            {
+                Console.Write("Введите ФИО автора для поиска книг: ");
+                var author = Console.ReadLine();
+                using (var db = new AppContext())
+                {
+                    var isAuthor = db.Books.Any(b => b.Author == author);
+                    if (!isAuthor)
+                        throw new AuthorNotFoundException();
+
+                    var result = db.Books.
+                        Where(b => b.Author == author).
+                        Select(b => new { Author = b.Author, Title = b.Title, Year = b.Year, Quantity = b.Quantity }).
+                        OrderBy(b => b.Title).ToList();
+                }
+            }
+            catch (AuthorNotFoundException)
+            {
+                Console.WriteLine("Автор с таким ФИО не найден");
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение: {ex.Message}");
+            }
+        }
+
+
     }
 }
