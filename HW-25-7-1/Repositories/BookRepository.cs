@@ -352,7 +352,35 @@ namespace HW_25_7_1.Repositories
             }
         }
 
+        public void SordedBooksByTitle()
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    var sortedBooks = db.Books.OrderBy(b => b.Title).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
+        }
 
+        public void SortedBooksByYearDescending()
+        {
+            try
+            {
+                using(var  db = new AppContext())
+                {
+                    var sortedBooks = db.Books.OrderByDescending(b => b.Year).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
+        }
 
 
     }
