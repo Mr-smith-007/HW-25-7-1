@@ -279,6 +279,9 @@ namespace HW_25_7_1.Repositories
                     if (!isAuthor)
                         throw new AuthorNotFoundException();
 
+                    // Не совсем понял задание, поэтому две различные вариации (количество уникальных книг, и общее кол-во на складе с разбивкой по экземплярам)
+                    var resultQuantity = db.Books.Where(b => b.Author == author).Count();
+
                     var result = db.Books.
                         Where(b => b.Author == author).
                         Select(b => new { Author = b.Author, Title = b.Title, Year = b.Year, Quantity = b.Quantity }).
@@ -290,6 +293,37 @@ namespace HW_25_7_1.Repositories
                 Console.WriteLine("Автор с таким ФИО не найден");
             }
             catch(Exception ex)
+            {
+                Console.WriteLine($"Возникло исключение: {ex.Message}");
+            }
+        }
+
+        public void GenreBooksCount()
+        {
+            try
+            {
+                Console.Write("Введите жанр для поиска книг: ");
+                var genre = Console.ReadLine();
+                using (var db = new AppContext())
+                {
+                    var isGenre = db.Books.Any(b => b.Genre == genre);
+                    if (!isGenre)
+                        throw new GenreNotFoundException();
+
+                    // Не совсем понял задание, поэтому две различные вариации 
+                    var resultQuantity = db.Books.Where(b => b.Genre == genre).Count();
+
+                    var result = db.Books.
+                        Where(b => b.Genre == genre).
+                        Select(b => new {Title = b.Title, Quantity = b.Quantity }).
+                        OrderBy(b => b.Title).ToList();
+                }
+            }
+            catch (GenreNotFoundException)
+            {
+                Console.WriteLine("Книги с указанным жанром не найдены");
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine($"Возникло исключение: {ex.Message}");
             }
