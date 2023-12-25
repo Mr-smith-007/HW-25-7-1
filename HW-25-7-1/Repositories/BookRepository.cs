@@ -45,11 +45,7 @@ namespace HW_25_7_1.Repositories
                     if (book == null)
                         Console.WriteLine("Книга с таким названием не найдена");
                 }
-            }
-            catch (WrongIdException)
-            {
-                Console.WriteLine("Введен неверный ID");
-            }
+            }           
             catch (Exception ex)
             {
                 Console.WriteLine($"Возникло исключение {ex.Message}");

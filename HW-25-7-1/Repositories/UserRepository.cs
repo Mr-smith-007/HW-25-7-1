@@ -249,6 +249,9 @@ namespace HW_25_7_1.Repositories
                     if (book == null)
                         throw new BookNotFoundException();
 
+                    if (!user.Books.Contains(book))
+                        Console.WriteLine("Данному пользователю не выдавалась эта книга");
+
                     user.Books.Remove(book);
                     book.Quantity++;
                     db.SaveChanges();
@@ -288,6 +291,9 @@ namespace HW_25_7_1.Repositories
                     var book = db.Books.Where(b => b.Id == bookId).FirstOrDefault();
                     if (book == null)
                         throw new BookNotFoundException();
+                    var user = db.Users. Where(u => u.Id == userId).FirstOrDefault();
+                    if (user == null)
+                        throw new UserNotFoundException();
                     var result = db.Users.Include(us => us.Books).Where(us => us.Id == userId).Any(u => u.Books.Contains(book));
                     return result;
                 }
@@ -300,6 +306,11 @@ namespace HW_25_7_1.Repositories
             catch (BookNotFoundException)
             {
                 Console.WriteLine("Книга с указанным Id не найдена");
+                return false;
+            }
+            catch (UserNotFoundException)
+            {
+                Console.WriteLine("Пользователь указанным Id не найден");
                 return false;
             }
             catch (Exception ex)
