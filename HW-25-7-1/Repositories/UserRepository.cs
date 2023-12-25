@@ -49,17 +49,18 @@ namespace HW_25_7_1.Repositories
 
         public void AddUser()
         {
-            Console.Write("Введите имя нового пользователя: ");
-            var name = Console.ReadLine();
-
-            Console.Write("Введите Email нового пользователя: ");
-            var email = Console.ReadLine();
-
-            if (!new EmailAddressAttribute().IsValid(email))
-                throw new WrongEmailException();
-
             try
             {
+                Console.Write("Введите имя нового пользователя: ");
+                var name = Console.ReadLine();
+
+                Console.Write("Введите Email нового пользователя: ");
+                var email = Console.ReadLine();
+
+                if (!new EmailAddressAttribute().IsValid(email))
+                    throw new WrongEmailException();
+
+
                 using (var db = new AppContext())
                 {
                     var user = new User { Name = name, Email = email };
@@ -327,7 +328,7 @@ namespace HW_25_7_1.Repositories
             {
                 Console.WriteLine("Некорректно введен Id");
                 return 0;
-            }            
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"Возникло исключение: {ex.Message}");

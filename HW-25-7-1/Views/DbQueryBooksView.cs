@@ -33,7 +33,7 @@ namespace HW_25_7_1.Views
             {
                 case "1":
                     {
-                        bookRepository.FindById
+                        bookRepository.FindById();
                         break;
                     }
                 case "2":
