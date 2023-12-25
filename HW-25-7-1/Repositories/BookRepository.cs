@@ -329,6 +329,31 @@ namespace HW_25_7_1.Repositories
             }
         }
 
+        public bool BoolTitleAuthorBook()
+        {
+            try
+            {
+                Console.Write("Введите ФИО автора для поиска: ");
+                var author = Console.ReadLine();
+
+                Console.Write("Введите название книги для поиска: ");
+                var title = Console.ReadLine();
+
+                using (var db = new AppContext())
+                {
+                    var result = db.Books.Any(b => b.Author == author && b.Title == title);
+                    return result;
+                }
+            }
+            catch(Exception ex) 
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+                return false;
+            }
+        }
+
+
+
 
     }
 }
