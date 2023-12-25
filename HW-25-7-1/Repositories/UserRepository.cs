@@ -2,6 +2,8 @@
 using HW_25_7_1.Exceptions;
 using System.ComponentModel.DataAnnotations;
 using HW_25_7_1.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 
 namespace HW_25_7_1.Repositories
 {
@@ -231,7 +233,7 @@ namespace HW_25_7_1.Repositories
                 if (!resultUserId)
                     throw new WrongIdException();
 
-                Console.Write("Введите Id книги, которую хочет вернуть пользователь");
+                Console.Write("Введите Id книги, которую хочет вернуть пользователь: ");
                 bool resultBookId = int.TryParse(Console.ReadLine(), out int bookId);
                 if (!resultBookId)
                     throw new WrongIdException();
@@ -264,6 +266,46 @@ namespace HW_25_7_1.Repositories
                 Console.WriteLine("Книга с указанным Id не найдена");
             }
 
+        }
+
+        public bool UserHasBook()
+        {
+            try
+            {
+                Console.Write("Введите Id пользователя: ");
+                bool resultUserId = int.TryParse(Console.ReadLine(), out int userId);
+                if (!resultUserId)
+                    throw new WrongIdException();
+
+                Console.Write("Введите Id книги: ");
+                bool resultBookId = int.TryParse(Console.ReadLine(), out int bookId);
+                if (!resultBookId)
+                    throw new WrongIdException();
+
+                using (var db = new AppContext())
+                {
+                    var book = db.Books.Where(b => b.Id ==bookId).FirstOrDefault();
+                    if (book == null)
+                        throw new BookNotFoundException();
+                    bool result = db.Users.Include(us => us.Books).Any(us => us.Books.Contains(book));
+                    return result;
+                }
+            }
+            catch (WrongIdException)
+            {
+                Console.WriteLine("Некорректно введен Id");
+                return false;
+            }
+            catch (BookNotFoundException)
+            {
+                Console.WriteLine("Книга с указанным Id не найдена");
+                return false;
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine($"Возникло исключение: {ex.Message}");
+                return false;
+            }
         }
     }
 }
