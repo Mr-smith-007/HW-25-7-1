@@ -382,6 +382,22 @@ namespace HW_25_7_1.Repositories
             }
         }
 
+        public void LastBook()
+        {
+            try
+            {
+                using(var db = new AppContext())
+                {
+                    var maxYear = db.Books.Max(b => b.Year);
+                    var lastBook= db.Books.Where(b =>b.Year == maxYear).ToList();
+                }
+            }
+            catch( Exception ex )
+            {
+                Console.WriteLine($"Возникло исключение {ex.Message}");
+            }
+        }
+
 
     }
 }
