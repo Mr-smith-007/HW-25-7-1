@@ -197,7 +197,7 @@ namespace HW_25_7_1.Repositories
 
                 using (var db = new AppContext())
                 {
-                    var user = db.Users.Where(user => user.Id == userId).FirstOrDefault();
+                    var user = db.Users.Include(u => u.Books).Where(user => user.Id == userId).FirstOrDefault();
                     if (user == null)
                         throw new UserNotFoundException();
 
@@ -241,7 +241,7 @@ namespace HW_25_7_1.Repositories
 
                 using (var db = new AppContext())
                 {
-                    var user = db.Users.Where(user => user.Id == userId).FirstOrDefault();
+                    var user = db.Users.Include(u => u.Books).Where(user => user.Id == userId).FirstOrDefault();
                     if (user == null)
                         throw new UserNotFoundException();
 
@@ -291,7 +291,7 @@ namespace HW_25_7_1.Repositories
                     var book = db.Books.Where(b => b.Id == bookId).FirstOrDefault();
                     if (book == null)
                         throw new BookNotFoundException();
-                    var user = db.Users. Where(u => u.Id == userId).FirstOrDefault();
+                    var user = db.Users.Include(u => u.Books).Where(u => u.Id == userId).FirstOrDefault();
                     if (user == null)
                         throw new UserNotFoundException();
                     var result = db.Users.Include(us => us.Books).Where(us => us.Id == userId).Any(u => u.Books.Contains(book));
